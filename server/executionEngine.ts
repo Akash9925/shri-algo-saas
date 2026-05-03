@@ -351,25 +351,27 @@ export class ExecutionLoop {
 
           await closePosition(exit.positionId, unrealizedPnl.toString());
 
-          // Create trade record
-          await createTrade({
-            strategyId,
-            userId,
-            instrument: position.instrument,
-            entryOrderId: 0,
-            action: position.action,
-            quantity: position.quantity,
-            entryPrice: position.entryPrice.toString(),
-            entryAt: position.createdAt,
-          });
+          // Create trade record - skip if no valid order ID
+          if (position.id) {
+            await createTrade({
+              strategyId,
+              userId,
+              instrument: position.instrument,
+              entryOrderId: position.id,
+              action: position.action,
+              quantity: position.quantity,
+              entryPrice: position.entryPrice.toString(),
+              entryAt: position.createdAt,
+            });
 
-          await closeTrade(0, {
+            await closeTrade(position.id, {
             exitPrice: exit.price.toString(),
             exitAt: new Date(),
             pnl: unrealizedPnl.toString(),
             pnlPercent: ((unrealizedPnl / (parseFloat(position.entryPrice.toString()) * position.quantity)) * 100).toString(),
             exitReason: exit.reason,
           });
+          }
         }
       }
 
