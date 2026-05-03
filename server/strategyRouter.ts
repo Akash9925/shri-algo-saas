@@ -188,6 +188,16 @@ export const strategyRouter = router({
         throw new Error("Strategy not found");
       }
 
+      // Check subscription limits
+      const subscription = await getOrCreateSubscription(ctx.user.id);
+      if (subscription.plan === "free") {
+        const userStrategies = await getStrategiesByUserId(ctx.user.id);
+        const activeCount = userStrategies.filter((s) => s.status === "active").length;
+        if (activeCount >= 1) {
+          throw new Error("Free plan allows only 1 active strategy. Upgrade to paid plan.");
+        }
+      }
+
       await updateStrategyStatus(input.strategyId, "active");
 
       return {
@@ -235,4 +245,25 @@ export const strategyRouter = router({
         createdAt: l.createdAt,
       }));
     }),
+
+  /**
+   * Get user subscription info
+   */
+  getSubscription: protectedProcedure.query(async ({ ctx }) => {
+    const subscription = await getOrCreateSubscription(ctx.user.id);
+    const strategies = await getStrategiesByUserId(ctx.user.id);
+    const activeCount = strategies.filter((s) => s.status === "active").length;
+
+    return {
+      plan: subscription.plan,
+      maxActiveStrategies: subscription.maxActiveStrategies,
+      activeStrategiesCount: activeCount,
+      canAddMoreStrategies: activeCount < subscription.maxActiveStrategies,
+      features: {
+        trailingSL: subscription.plan === "paid",
+        reentry: subscription.plan === "paid",
+        unlimitedStrategies: subscription.plan === "paid",
+      },
+    };
+  }),
 });

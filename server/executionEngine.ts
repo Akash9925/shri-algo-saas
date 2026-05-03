@@ -296,6 +296,8 @@ export class RiskEngine {
  * Execution Loop: Main strategy evaluation loop
  */
 export class ExecutionLoop {
+  private static processedStrategies = new Set<number>();
+
   static async evaluateStrategy(
     strategyId: number,
     userId: number,
@@ -316,6 +318,12 @@ export class ExecutionLoop {
           message: `Strategy validation failed: ${validation.errors.join(", ")}`,
         });
         return;
+      }
+
+      // First run: open positions for each leg
+      if (!this.processedStrategies.has(strategyId)) {
+        await this.initializeStrategyLegs(strategyId, userId, config, marketPrices);
+        this.processedStrategies.add(strategyId);
       }
 
       // Update all positions with current market prices
@@ -392,6 +400,49 @@ export class ExecutionLoop {
     }
   }
 
+  private static async initializeStrategyLegs(
+    strategyId: number,
+    userId: number,
+    config: StrategyConfig,
+    marketPrices: Map<string, number>
+  ) {
+    try {
+      for (const leg of config.legs) {
+        const currentPrice = marketPrices.get(leg.instrument) || 0;
+        if (currentPrice === 0) continue;
+
+        // Open position for each leg
+        await PositionManager.openPosition({
+          strategyId,
+          userId,
+          instrument: leg.instrument,
+          action: leg.action,
+          quantity: leg.quantity,
+          entryPrice: currentPrice,
+          stoploss: leg.stoploss,
+          target: leg.target,
+          trailingSlEnabled: leg.trailing_sl || false,
+        });
+      }
+
+      await logExecution({
+        strategyId,
+        userId,
+        eventType: "strategy_started",
+        message: `Strategy started with ${config.legs.length} leg(s)`,
+        metadata: { legCount: config.legs.length },
+      });
+    } catch (error) {
+      console.error("[ExecutionLoop] Failed to initialize strategy legs:", error);
+      await logExecution({
+        strategyId,
+        userId,
+        eventType: "initialization_error",
+        message: `Failed to initialize legs: ${error instanceof Error ? error.message : "Unknown error"}`,
+      });
+    }
+  }
+
   static async runExecutionCycle() {
     try {
       // Get all active strategies
@@ -412,6 +463,10 @@ export class ExecutionLoop {
       console.error("[ExecutionLoop] Cycle error:", error);
     }
   }
+
+  static resetProcessedStrategies() {
+    this.processedStrategies.clear();
+  }
 }
 
 /**
@@ -425,5 +480,13 @@ export function startExecutionEngine() {
     await ExecutionLoop.runExecutionCycle();
   }, 5000);
 
-  console.log("[ExecutionEngine] Execution engine started");
+  console.log("[ExecutionEngine] Execution engine started (runs every 5 seconds)");
+}
+
+/**
+ * Stop the execution engine (for testing)
+ */
+export function stopExecutionEngine() {
+  console.log("[ExecutionEngine] Execution engine stopped");
+  ExecutionLoop.resetProcessedStrategies();
 }

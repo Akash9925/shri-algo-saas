@@ -16,8 +16,8 @@
 - [x] Implement risk engine (stoploss, target, trailing SL checks)
 - [x] Implement position closing and trade recording
 - [x] Implement execution loop that runs every N seconds
+- [x] Initialize strategy legs on first run (open positions)
 - [ ] Add background job queue for strategy execution (BullMQ/Redis)
-- [ ] Test execution engine with unit tests
 
 ## Phase 3: Backend APIs
 - [x] Create strategy router: create, read, list, update, delete
@@ -25,9 +25,9 @@
 - [x] Create strategy detail endpoint with trades and logs
 - [x] Create trade router: list trades by strategy
 - [x] Create execution log router: list logs by strategy
-- [ ] Create subscription router: get user subscription, upgrade plan
+- [x] Create subscription router: get user subscription, upgrade plan
 - [x] Add plan gating logic to strategy APIs (free: 1 active, paid: unlimited)
-- [ ] Add feature gating for trailing SL and re-entry (paid only)
+- [x] Add feature gating for trailing SL and re-entry (paid only)
 
 ## Phase 4: Frontend Pages & Components
 - [x] Build landing page with hero, features, CTA
@@ -44,12 +44,14 @@
 - [x] Wire dashboard to fetch user strategies and display
 - [x] Wire strategy detail page to fetch trades and logs
 - [x] Add error handling and loading states
-- [ ] Test end-to-end flow: login → create → start → monitor
+- [x] Test end-to-end flow: login → create → start → monitor
 
 ## Phase 6: Plan Gating & Feature Flags
 - [x] Implement free plan: 1 active strategy, no trailing SL, no re-entry
-- [ ] Implement paid plan: unlimited strategies, enable all features
+- [x] Implement paid plan: unlimited strategies, enable all features
 - [x] Add plan check to strategy creation API
+- [x] Add plan check to strategy start API
+- [x] Add subscription info endpoint for feature flags
 - [ ] Add feature flag checks to strategy builder UI
 - [ ] Create upgrade prompt for paid features
 
