@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 interface Leg {
@@ -41,6 +41,7 @@ export default function StrategyBuilder() {
   const [loading, setLoading] = useState(false);
 
   const createStrategy = trpc.strategy.create.useMutation();
+  const { data: subscriptionInfo } = trpc.strategy.getSubscription.useQuery();
 
   if (authLoading) {
     return (
@@ -84,6 +85,14 @@ export default function StrategyBuilder() {
     const newLegs = [...legs];
     (newLegs[index] as any)[field] = value;
     setLegs(newLegs);
+  };
+
+  const handleTrailingSLChange = (index: number, value: boolean) => {
+    if (value && subscriptionInfo?.plan === "free") {
+      toast.error("Trailing stoploss is only available in paid plan");
+      return;
+    }
+    handleLegChange(index, "trailing_sl", value);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
