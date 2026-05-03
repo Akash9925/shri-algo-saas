@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { startExecutionEngine } from "../executionEngine";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -26,6 +27,20 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
     }
   }
   throw new Error(`No available port found starting from ${startPort}`);
+}
+
+async function initializeDatabase() {
+  try {
+    const { getDb } = await import("../db");
+    const db = await getDb();
+    if (db) {
+      console.log("[Database] Connected and ready");
+    } else {
+      console.warn("[Database] Not configured (DATABASE_URL not set) - running in demo mode");
+    }
+  } catch (error) {
+    console.error("[Database] Initialization failed:", error);
+  }
 }
 
 async function startServer() {
@@ -58,9 +73,17 @@ async function startServer() {
     console.log(`Port ${preferredPort} is busy, using port ${port} instead`);
   }
 
+  // Initialize database
+  await initializeDatabase();
+
   server.listen(port, () => {
     console.log(`Server running on http://localhost:${port}/`);
+    // Start execution engine
+    startExecutionEngine();
   });
 }
 
-startServer().catch(console.error);
+startServer().catch((error) => {
+  console.error("[Server] Failed to start:", error);
+  process.exit(1);
+});
