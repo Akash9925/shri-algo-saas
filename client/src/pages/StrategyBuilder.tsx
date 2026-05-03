@@ -324,10 +324,53 @@ export default function StrategyBuilder() {
                       />
                     </div>
                   </div>
+
+                  {/* Trailing SL - Paid Feature */}
+                  <div className="flex items-center gap-2 pt-3 border-t border-gray-200">
+                    <input
+                      type="checkbox"
+                      id={`trailing-sl-${index}`}
+                      checked={leg.trailing_sl || false}
+                      onChange={(e) => handleTrailingSLChange(index, e.target.checked)}
+                      disabled={subscriptionInfo?.plan === "free"}
+                      className="w-4 h-4 rounded cursor-pointer"
+                    />
+                    <label htmlFor={`trailing-sl-${index}`} className="text-xs font-medium text-gray-700 flex items-center gap-2 cursor-pointer">
+                      Trailing Stoploss
+                      {subscriptionInfo?.plan === "free" && (
+                        <Lock className="w-3 h-3 text-amber-500" />
+                      )}
+                    </label>
+                    {subscriptionInfo?.plan === "free" && (
+                      <span className="text-xs text-amber-600 ml-auto font-medium">Paid plan</span>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
           </Card>
+
+          {/* Plan Limit Warning */}
+          {subscriptionInfo?.plan === "free" && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <h3 className="font-medium text-blue-900">Upgrade to Paid Plan</h3>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Unlock trailing stoploss, re-entry, and unlimited active strategies with our paid plan.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="bg-blue-600 hover:bg-blue-700 whitespace-nowrap"
+                  onClick={() => setLocation("/upgrade")}
+                >
+                  Upgrade Now
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* Submit */}
           <div className="flex gap-3">

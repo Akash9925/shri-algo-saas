@@ -52,8 +52,8 @@
 - [x] Add plan check to strategy creation API
 - [x] Add plan check to strategy start API
 - [x] Add subscription info endpoint for feature flags
-- [x] Add feature flag checks to strategy builder UI (trailing SL disabled for free)
-- [x] Create upgrade prompt for paid features (toast notifications)
+- [x] Add feature flag checks to strategy builder UI (trailing SL toggle with lock icon)
+- [x] Create upgrade prompt for paid features (inline banner + upgrade page)
 
 ## Phase 7: Deployment Preparation
 - [x] Configure environment variables for production
@@ -70,4 +70,4 @@
 - [ ] Configure custom domain (optional)
 - [ ] Test live deployment end-to-end
 - [x] Document run/deploy instructions (README.md)
-- [ ] Deliver live URLs to user
+- [ ] Deliver live URLs to user (pending deployment)
