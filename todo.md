@@ -56,17 +56,18 @@
 - [ ] Create upgrade prompt for paid features
 
 ## Phase 7: Deployment Preparation
-- [ ] Configure environment variables for production
-- [ ] Set up database connection for production (Supabase)
-- [ ] Configure Redis for job queue (Upstash)
-- [ ] Build and test production bundle locally
-- [ ] Create deployment scripts for Vercel (frontend) and Render (backend)
-- [ ] Add health check endpoint for monitoring
+- [x] Configure environment variables for production
+- [x] Set up database connection for production (TiDB Cloud)
+- [ ] Configure Redis for job queue (Upstash) - optional
+- [x] Build and test production bundle locally (pnpm build successful)
+- [x] Create deployment configs: vercel.json, render.yaml
+- [x] Add comprehensive README with setup and deployment instructions
+- [x] Add detailed DEPLOYMENT.md guide with step-by-step instructions
 
 ## Phase 8: Deployment & Launch
 - [ ] Deploy frontend to Vercel
 - [ ] Deploy backend to Render
 - [ ] Configure custom domain (optional)
 - [ ] Test live deployment end-to-end
-- [ ] Document run/deploy instructions
+- [x] Document run/deploy instructions (README.md)
 - [ ] Deliver live URLs to user
