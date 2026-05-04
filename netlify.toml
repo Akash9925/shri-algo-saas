@@ -1,0 +1,27 @@
+[build]
+  command = "pnpm build"
+  publish = "dist/client"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["express", "drizzle-orm", "mysql2"]
+
+[[redirects]]
+  from = "/api/trpc/*"
+  to = "/.netlify/functions/api"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[env.production]
+  DATABASE_URL = "mysql://2phpf8DXa1A17Ms.root:xFh8Dlpo53cxO54M@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/shri_algo"
+  JWT_SECRET = "shri-algo-secret-2026-production"
+  NODE_ENV = "production"
+  BUILT_IN_FORGE_API_URL = "https://api.manus.im"
+  BUILT_IN_FORGE_API_KEY = "sk-H6jCw31HkMwPVJNSqyDF3ShK3YG1w7Tokiiaqc-L4ypK1tep1dLL-k1ChqCAJJBaG0XDZV66EmoH-JcWNO_XuKOp7NLJ"
+  OAUTH_SERVER_URL = "https://api.manus.im"
+  VITE_OAUTH_PORTAL_URL = "https://auth.manus.im"
