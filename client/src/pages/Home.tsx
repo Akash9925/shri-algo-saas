@@ -24,6 +24,11 @@ export default function Home() {
     return null;
   }
 
+  const handleGoogleLogin = () => {
+    // Google OAuth login - redirects to backend
+    window.location.href = "/api/auth/google";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       {/* Navigation */}
@@ -34,7 +39,7 @@ export default function Home() {
             <span className="text-2xl font-bold">Shri Algo</span>
           </div>
           <Button
-            onClick={() => (window.location.href = getLoginUrl())}
+            onClick={handleGoogleLogin}
             className="bg-blue-600 hover:bg-blue-700"
           >
             Sign In
@@ -54,7 +59,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               size="lg"
-              onClick={() => (window.location.href = getLoginUrl())}
+              onClick={handleGoogleLogin}
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg"
             >
               Get Started Free
@@ -124,7 +129,7 @@ export default function Home() {
           </p>
           <Button
             size="lg"
-            onClick={() => (window.location.href = getLoginUrl())}
+            onClick={handleGoogleLogin}
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg"
           >
             Sign Up Now
